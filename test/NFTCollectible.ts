@@ -44,14 +44,14 @@ describe("NFTCollectible", () => {
     await txn.wait();
 
     const ethBalanceBeforeWithdrawal = await provider.getBalance(owner.address);
-    console.log(`eth balanace before withdrawal ${ethBalanceBeforeWithdrawal}`);    
+    console.log("eth balanace before withdrawal %f", ethBalanceBeforeWithdrawal);
     txn = await contract.connect(owner).withdraw();
     await txn.wait();
-
     const ethBalanceAfterWithdrawal = await provider.getBalance(owner.address);
-    console.log(`eth balanace after withdrawal ${ethBalanceAfterWithdrawal}`);    
-
+    console.log("eth balanace after withdrawal  %f", ethBalanceAfterWithdrawal);
     expect(ethBalanceOriginal.eq(ethBalanceBeforeWithdrawal)).to.equal(true);
-    expect(ethBalanceAfterWithdrawal.gt(ethBalanceBeforeWithdrawal)).to.equal( true);
+    expect(ethBalanceAfterWithdrawal.gt(ethBalanceBeforeWithdrawal)).to.equal(
+      true
+    );
   });
 });
