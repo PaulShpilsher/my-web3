@@ -14,11 +14,14 @@ import { defaultWallet, IWallet } from './wallet/wallet.interface';
 import Box from '@mui/material/Box';
 import { AccountCircle } from '@mui/icons-material';
 import TextField from '@mui/material/TextField';
+import { Button } from '@mui/material';
 
 
 function Demo() {
 
     const [state, setState] = React.useState<IWallet>(defaultWallet());
+    const [nftCollection, setNFTCollection] = React.useState<string[]>([]);
+
 
     const connectWallet = async () => {
         try {
@@ -65,7 +68,22 @@ function Demo() {
         }
     };
     
-
+    const loadNFTCollection = async () => {
+        try {
+          console.log("load NFT collection");
+          let baseURI: string = state.contractBaseTokenURI;
+          baseURI = baseURI.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/");
+          setNFTCollection(
+            [
+              `${baseURI}0001.svg`,
+              `${baseURI}0002.svg`,
+              `${baseURI}0003.svg`,
+              `${baseURI}0004.svg`,
+            ]);
+        } catch (error) {
+          console.log(error);
+        }
+      };
 
   return (
     <React.Fragment>
@@ -82,6 +100,7 @@ function Demo() {
       </AppBar>
       <Toolbar />
       <Container>
+        <Button variant='text' onClick={connectWallet}>Connect Wallet</Button>
         <Stack direction="row" spacing={2} sx={{ margin: 5 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                 <AccountCircle color={state.iconColor} sx={{ mr: 1, my: 0.5 }} />
