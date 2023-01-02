@@ -16,11 +16,42 @@ describe("NFTCollectible", () => {
     await contract.deployed();
   });
 
-
-  // reserveNFTs reserves 10 NFTs for the owner.
+  // reserves 10 NFTs for the owner.
   it("Reserve NFTs should 10 NFTs reserved", async function () {
     let txn = await contract.reserveNFTs();
     await txn.wait();
     expect(await contract.balanceOf(owner.address)).to.equal(10);
+  });
+
+  // The price of NFT is 0.01ETH, so need pay 0.03ETH to mint 3 NFTs
+  it("Sending 0.03 ether should mint 3 NFTs", async function () {
+    let txn = await contract.mintNFTs(3, {
+      value: ethers.utils.parseEther("0.03"),
+    });
+    await txn.wait();
+    expect(await contract.balanceOf(owner.address)).to.equal(3);
+  });
+
+  // The gas fees go to miners,
+  // but the cryptocurrency goes to the contract and not the owner.
+  it("Withdrawal should withdraw the entire balance", async function () {
+    let provider = ethers.provider;
+    const ethBalanceOriginal = await provider.getBalance(owner.address);
+    console.log("original eth balanace %f", ethBalanceOriginal);
+    let txn = await contract
+      .connect(addr1)
+      .mintNFTs(1, { value: ethers.utils.parseEther("0.01") });
+    await txn.wait();
+
+    const ethBalanceBeforeWithdrawal = await provider.getBalance(owner.address);
+    console.log(`eth balanace before withdrawal ${ethBalanceBeforeWithdrawal}`);    
+    txn = await contract.connect(owner).withdraw();
+    await txn.wait();
+
+    const ethBalanceAfterWithdrawal = await provider.getBalance(owner.address);
+    console.log(`eth balanace after withdrawal ${ethBalanceAfterWithdrawal}`);    
+
+    expect(ethBalanceOriginal.eq(ethBalanceBeforeWithdrawal)).to.equal(true);
+    expect(ethBalanceAfterWithdrawal.gt(ethBalanceBeforeWithdrawal)).to.equal( true);
   });
 });
