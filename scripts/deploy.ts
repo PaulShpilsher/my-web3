@@ -1,5 +1,8 @@
 import { ethers } from "hardhat";
 
+// npx hardhat node
+// npx hardhat run scripts/deploy.ts --network localhost
+
 async function main() {
   const baseTokenURI = 'ipfs://QmP9FqjMHAbyvVnojrhNaMhwGZCGg3H5MwjLTsJHwQnFRn/';
   const contractFactory = await ethers.getContractFactory("NFTCollectible"); 
